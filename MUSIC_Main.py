@@ -4,12 +4,12 @@ from tkinter import filedialog
 from tkinter import ttk
 from Title import get_title
 from PIL import ImageTk,Image
-from tkinter.ttk import *
+#from tkinter.ttk import *
 from icons import get_icon
 from kivy.core.audio import SoundLoader
 import time
 from mutagen.mp3 import MP3
-
+#from multiprocessing import Process
 
 import pygame
  
@@ -26,14 +26,10 @@ root.resizable(False,False)
  
 pygame.init()
 
-
-#crash_sound = pygame.mixer.Sound("/sdcard/Download/Play_Date.mp3")
-
-
-#pygame.mixer.music.load('/sdcard/Download/Play_Date.mp3')
-
-#pygame.mixer.music.play(-1)
-
+	
+def seek():
+	pygame.mixer.music.play(start=int(bar.get()))
+	print(e,type(e),"xxx")
 
 
 def resume():
@@ -58,16 +54,26 @@ def pause():
 
 
 def play():
-	pygame.mixer.music.play(-1)
+	#print(time.time())
+	pygame.mixer.music.play()
 	play_btn.config(image=pause_icon)
 	play_btn.config(command=pause)
 
 
 
 def load_sound(dir):
+	global length
 	pygame.mixer.music.load(dir)
-	
+	audio=MP3(dir)
+	length=audio.info.length
+	#print(length)
+	bar.config(to=int(length))
+	bar.set(0)
 	play()
+#	p1=Process(target=play())
+#	p2=Process(target=slide())
+#	p1.start()
+#	p2.start()
 
 
 
@@ -165,10 +171,11 @@ nxt_btn=Button(root,image=nxt_icon,command=lambda:select_item(1))
 nxt_btn.pack(anchor=W,side=LEFT,pady=(550,0),padx=50)# , before=title_label)
 #nxt_btn.place(rely=0.8, relx=0.35)
 
-barvalue=IntVar()
-bar=ttk.Progressbar(root,length=524,mode='determinate')
-bar.place(relx=0.03,rely=0.7)
 
+#bar=ttk.Progressbar(root,length=524,mode='determinate')
+bar=ttk.Scale(root,length=524,from_=0,command=seek)
+bar.place(relx=0.03,rely=0.7)
+#ttk.Style.theme_use(bar,"alt")
 
 
 scrollbar = Scrollbar(root)
