@@ -70,10 +70,6 @@ def load_sound(dir):
 	bar.config(to=int(length))
 	bar.set(0)
 	play()
-#	p1=Process(target=play())
-#	p2=Process(target=slide())
-#	p1.start()
-#	p2.start()
 
 
 
@@ -143,7 +139,7 @@ title_label.place(relx=0.01,rely=0.12)
 play_list=Label(root,text="Playlist")
 play_list.pack(padx=20,anchor=E)
 
-folder_icon=get_icon("/sdcard/python/myAPP/Music/Folder.png")
+folder_icon=get_icon("/Folder.png")
 btn=Button(root,image=folder_icon,command=open)
 btn.pack(anchor=E)
 
@@ -152,21 +148,21 @@ btn.pack(anchor=E)
 #pan.pack(side=RIGHT,expand=1)
 
 
-pre_icon=get_icon("/sdcard/python/myAPP/Music/pre.png")
+pre_icon=get_icon("/pre.png")
 pre_btn=Button(root,image=pre_icon,command=lambda:select_item(0))
 pre_btn.pack(anchor=W,side=LEFT,pady=(550,00),padx=50)#,before=title_label)
 #pre_btn.place(rely=0.8, relx=0.01)
 
 
-pause_icon=get_icon("/sdcard/python/myAPP/Music/pause.png")
-play_icon=get_icon("/sdcard/python/myAPP/Music/Play.png")
+pause_icon=get_icon("/pause.png")
+play_icon=get_icon("/Play.png")
 play_btn=Button(root,image=play_icon)
 play_btn.pack(anchor=W,side=LEFT,pady=(550,00),padx=50)#before=title_label)
 #play_btn.place(rely=0.8, relx=0.19)
 #play_btn.config(borderwidth=0)
 
 
-nxt_icon=get_icon("/sdcard/python/myAPP/Music/next.png")
+nxt_icon=get_icon("/next.png")
 nxt_btn=Button(root,image=nxt_icon,command=lambda:select_item(1))
 nxt_btn.pack(anchor=W,side=LEFT,pady=(550,0),padx=50)# , before=title_label)
 #nxt_btn.place(rely=0.8, relx=0.35)
