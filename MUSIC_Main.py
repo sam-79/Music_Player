@@ -6,40 +6,32 @@ from Title import get_title
 from PIL import ImageTk,Image
 #from tkinter.ttk import *
 from icons import get_icon
-from kivy.core.audio import SoundLoader
-import time
-from mutagen.mp3 import MP3
-#from multiprocessing import Process
 
+import time , tempfile
+from mutagen.mp3 import MP3
+
+from album_art import get_art
 import pygame
- 
- 
- 
+
+from play_online import main
+
  
 root=Tk()
 root.title("Music")
-root.geometry("1700x1000")
+root.geometry("1700x1050")
 root.resizable(False,False)
 
 
- 
- 
 pygame.init()
 
-	
-def seek():
-	pygame.mixer.music.play(start=int(bar.get()))
-	print(e,type(e),"xxx")
 
+def seek(e):
+	pygame.mixer.music.play(start=int(bar.get()))
 
 def resume():
-	#print("doNe")
 	pygame.mixer.music.unpause()
 	play_btn.config(image=pause_icon,command=lambda:pause())
 	
-
-
-
 
 
 def pause():
@@ -51,26 +43,30 @@ def pause():
 	
 
 
-
-
 def play():
 	#print(time.time())
-	pygame.mixer.music.play()
-	play_btn.config(image=pause_icon)
-	play_btn.config(command=pause)
-
+	pygame.mixer.music.play(-1)
+	play_btn.config(image=pause_icon,command=pause)
+	pre_btn.config(command=lambda:select_item(0))
+	nxt_btn.config(command=lambda:select_item(1))
+	bar.config(command=seek)
+	
 
 
 def load_sound(dir):
 	global length
+	#pho=get_art(dir)
+#	img=Image.open("/sdcard/Download/img.png")
+#	photo = ImageTk.PhotoImage(img)
+#	canvo.create_image(canvo.canvasx(300),canvo.canvasy(300),image=pho)
+	
 	pygame.mixer.music.load(dir)
 	audio=MP3(dir)
 	length=audio.info.length
 	#print(length)
 	bar.config(to=int(length))
-	bar.set(0)
+	#bar.set(0)
 	play()
-
 
 
 
@@ -130,47 +126,77 @@ def open():
 
 
 
+def down():
+	f= tempfile.TemporaryDirectory(dir = "/storage/emulated/0/")
+	dir=f.name
+	main(dir)
+	location=dir+"/song.mp3"
+	#print(location)
+	load_sound(location)
+
+
+
+# Menu Bar configurations
+m=Menu(root)
+op_menu=Menu(m,tearoff=0)
+
+
+op_menu.add_command(label="Play Online",command=down)
+m.add_cascade(label="Options  ",menu=op_menu)
+
+m.add_cascade(label="help  ")
+m.add_command(label="exit",command=exit)
+m.config(background="#BDBDBD")
+root.config(menu=m)
+
+
 title_label=Label(root,width=22)
-title_label.place(relx=0.01,rely=0.12)
+title_label.place(relx=0.02,rely=0.04)
 
 
 
 
-play_list=Label(root,text="Playlist")
-play_list.pack(padx=20,anchor=E)
+play_list=Label(root,text="Playlist",font=("Arial",15))
+play_list.place(relx=0.47)
 
-folder_icon=get_icon("/Folder.png")
+folder_icon=get_icon("/sdcard/python/myAPP/Music/Folder.png")
 btn=Button(root,image=folder_icon,command=open)
 btn.pack(anchor=E)
 
 
-#pan=PanedWindow(root, orient=VERTICAL,background="red")
-#pan.pack(side=RIGHT,expand=1)
+
+canvo=Canvas(root,width=600,height=600,background="black")
+canvo.place(relx=0.03,rely=0.13)
+#img_lbl.place(relx=0,rely=0)
+img=Image.open("/sdcard/Download/img.png")
+pho= ImageTk.PhotoImage(img)
+canvo.create_image(canvo.canvasx(300),canvo.canvasy(300),image=pho)
 
 
-pre_icon=get_icon("/pre.png")
-pre_btn=Button(root,image=pre_icon,command=lambda:select_item(0))
-pre_btn.pack(anchor=W,side=LEFT,pady=(550,00),padx=50)#,before=title_label)
+
+pre_icon=get_icon("/sdcard/python/myAPP/Music/pre.png")
+pre_btn=Button(root,image=pre_icon)
+pre_btn.pack(anchor=W,side=LEFT,pady=(750,00),padx=50)#,before=title_label)
 #pre_btn.place(rely=0.8, relx=0.01)
 
 
-pause_icon=get_icon("/pause.png")
-play_icon=get_icon("/Play.png")
+pause_icon=get_icon("/sdcard/python/myAPP/Music/pause.png")
+play_icon=get_icon("/sdcard/python/myAPP/Music/Play.png")
 play_btn=Button(root,image=play_icon)
-play_btn.pack(anchor=W,side=LEFT,pady=(550,00),padx=50)#before=title_label)
+play_btn.pack(anchor=W,side=LEFT,pady=(750,00),padx=90)#before=title_label)
 #play_btn.place(rely=0.8, relx=0.19)
 #play_btn.config(borderwidth=0)
 
 
-nxt_icon=get_icon("/next.png")
-nxt_btn=Button(root,image=nxt_icon,command=lambda:select_item(1))
-nxt_btn.pack(anchor=W,side=LEFT,pady=(550,0),padx=50)# , before=title_label)
+nxt_icon=get_icon("/sdcard/python/myAPP/Music/next.png")
+nxt_btn=Button(root,image=nxt_icon)
+nxt_btn.pack(anchor=W,side=LEFT,pady=(750,0),padx=50)# , before=title_label)
 #nxt_btn.place(rely=0.8, relx=0.35)
 
 
-#bar=ttk.Progressbar(root,length=524,mode='determinate')
-bar=ttk.Scale(root,length=524,from_=0,command=seek)
-bar.place(relx=0.03,rely=0.7)
+bar=ttk.Progressbar(root,length=524,mode='determinate')
+bar=ttk.Scale(root,length=600)
+bar.place(relx=0.03,rely=0.79)
 #ttk.Style.theme_use(bar,"alt")
 
 
@@ -179,6 +205,8 @@ scrollbar.pack( side = RIGHT, fill = Y )
 
 
 
-song_listbox=Listbox(root ,borderwidth=5,selectmode=SINGLE,width=30,background="White",foreground="red" , yscrollcommand = scrollbar.set)
-song_listbox.pack( side = RIGHT, fill = Y , ipadx=15,ipady=5)
+song_listbox=Listbox(root , width=30, yscrollcommand = scrollbar.set)
+song_listbox.pack( side = RIGHT, fill =Y, ipadx=15,ipady=5)
+
+
 root.mainloop()
